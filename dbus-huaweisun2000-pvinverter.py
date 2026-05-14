@@ -107,6 +107,17 @@ def exit_mainloop(mainloop):
     mainloop.quit()
 
 def main():
+    # Parse command line arguments for instance ID
+    instance_id = 1  # Default instance
+    if len(sys.argv) > 1:
+        try:
+            instance_id = int(sys.argv[1])
+            if instance_id < 1 or instance_id > 99:
+                print(f"Error: Instance ID must be between 1 and 99, got {instance_id}")
+                sys.exit(1)
+        except ValueError:
+            print(f"Error: Instance ID must be a number, got '{sys.argv[1]}'")
+            sys.exit(1)
 
     # FIXME: This should be a proper private logger, instead of trying to configure the root logger,
     # which doesn't work unless force=True is specified and then leads to all sorts of libraries
@@ -121,7 +132,8 @@ def main():
     # Have a mainloop, so we can send/receive asynchronous calls to and from dbus
     DBusGMainLoop(set_as_default=True)
 
-    settings = HuaweiSUN2000Settings()
+    settings = HuaweiSUN2000Settings(instance_id=instance_id)
+    logging.info(f"Huawei SUN2000 Instance ID: {instance_id}")
     logging.info(f"VRM pvinverter instance: {settings.get_vrm_instance()}")
     logging.info(f"Settings: ModbusHost '{settings.get('modbus_host')}', ModbusPort '{settings.get('modbus_port')}', ModbusUnit '{settings.get('modbus_unit')}'")
     logging.info(f"Settings: CustomName '{settings.get('custom_name')}', Position '{settings.get('position')}', UpdateTimeMS '{settings.get('update_time_ms')}'")
@@ -208,7 +220,7 @@ def main():
         }
 
         pvac_output = DbusSun2000Service(
-            servicename='com.victronenergy.pvinverter.sun2000',
+            servicename=f'com.victronenergy.pvinverter.sun2000_{instance_id}',
             settings=settings,
             paths=dbuspath,
             productname=staticdata['Model'],
