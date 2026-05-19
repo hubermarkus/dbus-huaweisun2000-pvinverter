@@ -41,6 +41,7 @@ The driver supports monitoring multiple Huawei SUN2000 inverters simultaneously!
 - Supports smart meter per inverter
 
 **📖 See [MULTI-INVERTER.md](MULTI-INVERTER.md) for complete installation guide**
+**📖 See [SSH-CONFIG-GUIDE.md](SSH-CONFIG-GUIDE.md) for SSH configuration reference**
 
 **Quick start:**
 ```bash
@@ -48,8 +49,9 @@ The driver supports monitoring multiple Huawei SUN2000 inverters simultaneously!
 sh install-additional-inverter.sh 2
 sh install-additional-inverter.sh 3
 
-# Configure via command line or GUI
+# Configure via SSH command line
 dbus -y com.victronenergy.settings /Settings/HuaweiSUN2000_2/ModbusHost SetValue "192.168.200.2"
+dbus -y com.victronenergy.settings /Settings/HuaweiSUN2000_2/CustomName SetValue "East Roof"
 ```
 
 ## SmartLogger3000 Compatibility
