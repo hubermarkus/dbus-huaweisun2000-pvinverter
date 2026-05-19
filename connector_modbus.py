@@ -167,8 +167,18 @@ class ModbusDataCollector2000Delux:
 
 ## Just for testing ##
 if __name__ == "__main__":
+    import sys
     DBusGMainLoop(set_as_default=True)
-    settings = HuaweiSUN2000Settings()
+
+    # Support instance ID for testing
+    instance_id = 1
+    if len(sys.argv) > 1:
+        try:
+            instance_id = int(sys.argv[1])
+        except ValueError:
+            print(f"Warning: Invalid instance ID '{sys.argv[1]}', using default 1")
+
+    settings = HuaweiSUN2000Settings(instance_id=instance_id)
     inverter = inverter.Sun2000(host=settings.get("modbus_host"), port=settings.get("modbus_port"),
                                 modbus_unit=settings.get("modbus_unit"))
     inverter.connect()

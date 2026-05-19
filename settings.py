@@ -23,19 +23,23 @@ class SessionBus(dbus.bus.BusConnection):
 
 class HuaweiSUN2000Settings(object):
 
-    def __init__(self):
+    def __init__(self, instance_id=1):
+        self.instance_id = instance_id
+        # Use instance-specific paths to allow multiple inverters
+        settings_prefix = f"/Settings/HuaweiSUN2000_{instance_id}" if instance_id > 1 else "/Settings/HuaweiSUN2000"
+        device_prefix = f"/Settings/Devices/HuaweiSUN2000_{instance_id}" if instance_id > 1 else "/Settings/Devices/HuaweiSUN2000"
+
         # path, default value, min, max, logging silent or not
         supported_settings = {
-            "modbus_host": ["/Settings/HuaweiSUN2000/ModbusHost", "192.168.200.1", "", "", 0],
-            "modbus_port": ["/Settings/HuaweiSUN2000/ModbusPort", 6607, 1, 65536, 0],
-            "modbus_unit": ["/Settings/HuaweiSUN2000/ModbusUnit", 0, 0, 247, 0],
-            "custom_name": ["/Settings/HuaweiSUN2000/CustomName", "Huawei SUN2000", "", "", 0],
-            "position": ["/Settings/HuaweiSUN2000/Position", 1, 0, 2, 0],
-            "update_time_ms": ["/Settings/HuaweiSUN2000/UpdateTimeMS", 1000, 100, 10000000, 0],
-            "power_correction_factor": ["/Settings/HuaweiSUN2000/PowerCorrectionFactor", 0.995, 0.001, 100.0, 0],
-            # "HuaweiSUN2000" is our unique id for the moment. This needs some more thought if more than one inverter shall be supported.
-            # Unfortunately we can't use the serial number, because we need the config in order to get that one, so we have a catch-22.
-            "vrm_instance": ["/Settings/Devices/HuaweiSUN2000/ClassAndVrmInstance", "pvinverter:1", "", "", 0],
+            "modbus_host": [f"{settings_prefix}/ModbusHost", "192.168.200.1", "", "", 0],
+            "modbus_port": [f"{settings_prefix}/ModbusPort", 6607, 1, 65536, 0],
+            "modbus_unit": [f"{settings_prefix}/ModbusUnit", 0, 0, 247, 0],
+            "custom_name": [f"{settings_prefix}/CustomName", f"Huawei SUN2000 #{instance_id}", "", "", 0],
+            "position": [f"{settings_prefix}/Position", 1, 0, 2, 0],
+            "update_time_ms": [f"{settings_prefix}/UpdateTimeMS", 1000, 100, 10000000, 0],
+            "power_correction_factor": [f"{settings_prefix}/PowerCorrectionFactor", 0.995, 0.001, 100.0, 0],
+            # VRM instance uses the instance_id to ensure unique values
+            "vrm_instance": [f"{device_prefix}/ClassAndVrmInstance", f"pvinverter:{instance_id}", "", "", 0],
         }
         self.dbus_conn = self._dbusconnection()
         self.settings = SettingsDevice(bus=self.dbus_conn, supportedSettings=supported_settings, eventCallback=self._handle_changed_setting)

@@ -6,6 +6,7 @@ DBus driver for Victron Venus OS to integrate Huawei Sun2000 PV inverters with s
 
 ✅ **Venus OS v3.67 Compatible** - Full support for latest Venus OS version
 ✅ **Smart Meter Integration** - Track grid import/export with DTSU666-H or similar meters
+✅ **Multiple Inverter Support** - Monitor multiple Huawei inverters simultaneously (NEW!)
 ✅ **GUI-v1 & GUI-v2 Support** - Works with both Classic UI and New UI
 ✅ **Custom Overview Tile** - Real-time PV generation and grid flow display
 ✅ **VRM Portal Logging** - Historical data, graphs, and analytics
@@ -30,6 +31,36 @@ If you have a DTSU666-H or compatible meter connected to your inverter via RS485
 - **Calculate self-consumption** and grid dependency
 
 All data is logged to VRM Portal for historical tracking and analysis.
+
+## Multiple Inverter Support
+
+The driver supports monitoring multiple Huawei SUN2000 inverters simultaneously! Each inverter:
+- Has its own DBus service and VRM instance ID
+- Can be configured independently
+- Reports data separately in VRM Portal
+- Supports smart meter per inverter
+
+**📖 See [MULTI-INVERTER.md](MULTI-INVERTER.md) for complete installation guide**
+**📖 See [SSH-CONFIG-GUIDE.md](SSH-CONFIG-GUIDE.md) for SSH configuration reference**
+
+**Quick start:**
+```bash
+# Install additional inverter (instance #2, #3, etc.)
+sh install-additional-inverter.sh 2
+sh install-additional-inverter.sh 3
+
+# Configure via SSH command line
+dbus -y com.victronenergy.settings /Settings/HuaweiSUN2000_2/ModbusHost SetValue "192.168.200.2"
+dbus -y com.victronenergy.settings /Settings/HuaweiSUN2000_2/CustomName SetValue "East Roof"
+```
+
+## SmartLogger3000 Compatibility
+
+SmartLogger3000 compatibility is **unknown and untested**. The driver is designed for direct inverter connections.
+
+**📖 See [SMARTLOGGER3000.md](SMARTLOGGER3000.md) for compatibility information and testing instructions**
+
+If you have SmartLogger3000 and would like to test compatibility, please report your findings!
 
 ## Hardware Setup
 
